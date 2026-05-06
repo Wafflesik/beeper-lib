@@ -3,20 +3,20 @@
 
 class Beeper{
 private:
-   int pin;
-   unsigned long beep_interval;
-   unsigned long starttime;
-   unsigned long length;
-   unsigned long pause;
-   int repeat;
-   int currentRepeat;
-   bool beeping;
-   bool active;
+   int _pin;
+   unsigned long _beep_interval;
+   unsigned long _starttime;
+   unsigned long _length;
+   unsigned long _pause;
+   int _repeat;
+   int _currentRepeat;
+   bool _beeping;
+   bool _isPaused;
    void startBeep();
    void stopBeep();
 public:
    Beeper(int p);
-   void beep(unsigned long l, unsigned long p, int r);
+   void beep(unsigned long lenght, unsigned long pause, int repeat);
    void update();
    bool checkState();
 };

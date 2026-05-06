@@ -2,60 +2,56 @@
 #include "Arduino.h"
 
 Beeper::Beeper(int p){
-    pin = p;
+    _pin = p;
+    _isPaused = false;
+    _beeping = false;
+	_repeat = false;
+    _currentRepeat = 0;
     pinMode(pin, OUTPUT);
-    active = false;
-    beeping = false;
-    currentRepeat = 0;
-    stopBeep();
+    digitalWrite(_pin, LOW);
 }
 
 void Beeper::startBeep(){
-    tone(pin, 100);
+    _starttime = millis();
+    _beeping = true;
+    _isPaused = false;
+    digitalWrite(_pin, HIGH);
 }
 
 void Beeper::stopBeep(){
-    tone(pin, 0);
+    digitalWrite(_pin, LOW);
+    _beeping = false;
+    
 }
 
 
-void Beeper::beep(unsigned long l, unsigned long p, int r){
-    length = l;
-    pause = p;
-    repeat = r;
-    beep_interval = l + p;
-    currentRepeat = 0;
-    active = true;
-    beeping = true;
-    starttime = millis();
+void Beeper::beep(unsigned long length, unsigned long pause, int repeat){
+    _length = length;
+    _pause = pause;
+    _currentRepeat = 0;
+    _repeat = repeat;
     startBeep();
 }
 
 void Beeper::update(){
-    if (!active) return;
+   	if (_currentRepeat = _repeat) return;
 
-    unsigned long elapsed = millis() - starttime;
+	if (_beeping){
+		if (millis() - _starttime >= _length){
+			stopBeep();
+			_currentRepeat++
 
-    if (beeping){
-        // Currently in the ON phase — check if it's time to stop
-        if (elapsed >= length){
-            stopBeep();
-            beeping = false;
-            starttime = millis(); // reset timer for the pause phase
-        }
-    } else {
-        // Currently in the pause phase — check if it's time for next beep
-        if (elapsed >= pause){
-            currentRepeat++;
-            if (currentRepeat >= repeat){
-                active = false; // all repeats done
-            } else {
-                startBeep();
-                beeping = true;
-                starttime = millis();
-            }
-        }
-    }
+			if (_repeat-_currentRepeat >0){
+				_isPaused = true;
+				_starttime = millis();
+			}
+		}
+	}
+	else if (_isPaused){
+		if (millis()-starttime >= _pause){
+			startBeep();
+		}
+	}	
 }
 
 bool Beeper::checkState(){
