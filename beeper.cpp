@@ -5,9 +5,9 @@ Beeper::Beeper(int p){
     _pin = p;
     _isPaused = false;
     _beeping = false;
-	_repeat = false;
+	_repeat = 0;
     _currentRepeat = 0;
-    pinMode(pin, OUTPUT);
+    pinMode(_pin, OUTPUT);
     digitalWrite(_pin, LOW);
 }
 
@@ -24,6 +24,14 @@ void Beeper::stopBeep(){
     
 }
 
+void Beeper::beep(unsigned long length, int repeat){
+    _length = length;
+    _pause = length;
+    _currentRepeat = 0;
+    _repeat = repeat;
+    startBeep();
+}
+
 
 void Beeper::beep(unsigned long length, unsigned long pause, int repeat){
     _length = length;
@@ -34,12 +42,12 @@ void Beeper::beep(unsigned long length, unsigned long pause, int repeat){
 }
 
 void Beeper::update(){
-   	if (_currentRepeat = _repeat) return;
+   	if (_currentRepeat >= _repeat) return;
 
 	if (_beeping){
 		if (millis() - _starttime >= _length){
 			stopBeep();
-			_currentRepeat++
+			_currentRepeat++;
 
 			if (_repeat-_currentRepeat >0){
 				_isPaused = true;
@@ -48,12 +56,9 @@ void Beeper::update(){
 		}
 	}
 	else if (_isPaused){
-		if (millis()-starttime >= _pause){
+		if (millis()-_starttime >= _pause){
 			startBeep();
 		}
 	}	
 }
 
-bool Beeper::checkState(){
-    return active;
-}

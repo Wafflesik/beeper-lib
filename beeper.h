@@ -1,10 +1,11 @@
 #ifndef beeper_h
 #define beeper_h
+#include "Arduino.h"
+#include <Timer.h>
 
 class Beeper{
 private:
    int _pin;
-   unsigned long _beep_interval;
    unsigned long _starttime;
    unsigned long _length;
    unsigned long _pause;
@@ -17,7 +18,7 @@ private:
 public:
    Beeper(int p);
    void beep(unsigned long lenght, unsigned long pause, int repeat);
+   void beep(unsigned long lenght, int repeat);
    void update();
-   bool checkState();
 };
 #endif
